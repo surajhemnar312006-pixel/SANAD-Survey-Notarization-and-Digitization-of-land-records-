@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SANAD — Land Record Digitization</title>
+
+  <!-- url_for('static', filename=...) builds the correct path to files
+       inside your static/ folder, so links don't break if the app moves. -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <header class="hero">
+      <p class="hero-eyebrow">SANAD PLATFORM</p>
+      <h1 class="hero-title">🗺️ Land Record Digitization &amp; Validation</h1>
+      <p class="hero-sub">
+        Turn scanned, handwritten and legacy land documents into structured,
+        validated, trustworthy digital records — with AI extraction and
+        human-in-the-loop verification.
+      </p>
+    </header>
+
+    <!-- TAB NAV -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="upload">📤 Upload</button>
+      <button class="tab-btn" data-tab="records">📄 Records</button>
+      <button class="tab-btn" data-tab="stats">📊 Statistics</button>
+      <button class="tab-btn" data-tab="validation">✅ Validation</button>
+    </nav>
+
+    <!-- UPLOAD TAB -->
+    <section id="upload" class="tab-panel active">
+      <h2>Upload a Land Document</h2>
+      <label for="fileInput" class="dropzone">
+        <span id="dropzoneText">Drag &amp; drop a document, or click to browse</span>
+        <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.pdf" hidden />
+      </label>
+      <div id="uploadPreview"></div>
+    </section>
+
+    <!-- RECORDS TAB -->
+    <section id="records" class="tab-panel">
+      <h2>Land Records</h2>
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>Owner Name</th>
+            <th>Survey No.</th>
+            <th>Village</th>
+            <th>Confidence</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Jinja loop: repeats this row once per item in "records"
+               (the list we passed from app.py) -->
+          {% for r in records %}
+          <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ r.survey }}</td>
+            <td>{{ r.village }}</td>
+            <td>{{ r.confidence }}%</td>
+            <td><span class="pill {{ r.status }}">{{ r.status | capitalize }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <!-- STATISTICS TAB -->
+    <section id="stats" class="tab-panel">
+      <h2>Statistics</h2>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Records</div>
+          <div class="kpi-value">{{ stats.total }}</div>
+        </div>
+        <div class="kpi-card verified">
+          <div class="kpi-label">Verified</div>
+          <div class="kpi-value">{{ stats.verified }}</div>
+        </div>
+        <div class="kpi-card pending">
+          <div class="kpi-label">Pending</div>
+          <div class="kpi-value">{{ stats.pending }}</div>
+        </div>
+        <div class="kpi-card conflict">
+          <div class="kpi-label">Conflicts</div>
+          <div class="kpi-value">{{ stats.conflicts }}</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <canvas id="confidenceChart" height="90"></canvas>
+      </div>
+    </section>
+
+    <!-- VALIDATION TAB -->
+    <section id="validation" class="tab-panel">
+      <h2>Validation Status</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 73%;"></div>
+      </div>
+      <p class="progress-label">73% Records Verified</p>
+      <div class="alert warning">24 records pending human verification</div>
+      <div class="alert error">10 conflicts detected — review required</div>
+    </section>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
